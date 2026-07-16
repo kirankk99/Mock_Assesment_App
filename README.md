@@ -1,6 +1,6 @@
-# Accenture India Technical Aptitude Simulator
+# Technical Aptitude Simulator
 
-A full mock-test app modeled on Accenture's current (2026) hiring assessment
+A full mock-test app modeled on current hiring assessment
 sections: **Verbal Ability, Logical Reasoning, Quantitative Aptitude,
 Pseudocode & Programming Logic, Networking/Security/Cloud, and Core CS
 Fundamentals**.
@@ -34,7 +34,7 @@ Fundamentals**.
 ## 1. Project structure
 
 ```
-accenture-aptitude-simulator/
+aptitude-simulator/
 ├── app/
 │   ├── page.js              # Dashboard: start/resume test, view last result, reset
 │   ├── test/page.js          # Quiz screen (timer, question nav, answering)
@@ -65,7 +65,7 @@ or a free MongoDB Atlas cluster — see step 4).
 
 ```bash
 # unzip the folder first, then:
-cd accenture-aptitude-simulator
+cd aptitude-simulator
 npm i
 
 cp .env.example .env.local
@@ -111,7 +111,7 @@ laptop, so for production you need a cloud MongoDB instance:
 5. Click **Connect > Drivers**, copy the connection string, and swap in your
    username/password and a database name, e.g.:
    ```
-   mongodb+srv://youruser:yourpassword@cluster0.xxxxx.mongodb.net/accenture-sim?retryWrites=true&w=majority
+   mongodb+srv://youruser:yourpassword@cluster0.xxxxx.mongodb.net/sim?retryWrites=true&w=majority
    ```
 6. Run `npm run seed` once locally with this URI in `.env.local` to populate
    the cloud database.

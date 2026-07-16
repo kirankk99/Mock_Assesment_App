@@ -1,9 +1,9 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "Accenture India Technical Aptitude Simulator",
+  title: "Technical Aptitude Simulator",
   description:
-    "A 30-question, 60-minute mock test modeled on Accenture's cognitive & technical assessment sections.",
+    "A 30-question, 60-minute mock test modeled on cognitive & technical assessment sections.",
 };
 
 export default function RootLayout({ children }) {

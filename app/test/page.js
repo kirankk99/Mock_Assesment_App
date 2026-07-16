@@ -136,7 +136,7 @@ export default function TestPage() {
   return (
     <div>
       <header className="app-header">
-        <h1>Testing: Accenture Technical Aptitude</h1>
+        <h1>Testing: Technical Aptitude</h1>
         <div className={`timer-box ${lowTime ? "low-time" : ""}`}>
           {formatTime(remaining)}
         </div>
@@ -164,14 +164,14 @@ export default function TestPage() {
             <div>
               <span
                 className="legend-dot"
-                style={{ background: "var(--accenture-purple)" }}
+                style={{ background: "var(--purple)" }}
               ></span>
               Current question
             </div>
             <div>
               <span
                 className="legend-dot"
-                style={{ background: "#f3e5f5", border: "1px solid var(--accenture-purple)" }}
+                style={{ background: "#f3e5f5", border: "1px solid var(--purple)" }}
               ></span>
               Answered
             </div>

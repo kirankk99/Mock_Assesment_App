@@ -31,7 +31,7 @@ export default function ResultsPage() {
   return (
     <div>
       <header className="app-header">
-        <h1>Accenture India Technical Aptitude Simulator</h1>
+        <h1>Technical Aptitude Simulator</h1>
       </header>
 
       <div className="quiz-area" style={{ overflowY: "visible" }}>
@@ -54,7 +54,7 @@ export default function ResultsPage() {
           <h2
             style={{
               marginBottom: 20,
-              borderBottom: "2px solid var(--accenture-purple)",
+              borderBottom: "2px solid var(--purple)",
               paddingBottom: 10,
             }}
           >

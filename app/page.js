@@ -77,7 +77,7 @@ export default function DashboardPage() {
   return (
     <div>
       <header className="app-header">
-        <h1>Accenture India Technical Aptitude Simulator</h1>
+        <h1>Technical Aptitude Simulator</h1>
       </header>
 
       <div className="container">
@@ -92,7 +92,7 @@ export default function DashboardPage() {
         <div className="card">
           <h3 style={{ marginBottom: 10 }}>30 Questions · 60 Minutes</h3>
           <p className="muted" style={{ marginBottom: 20 }}>
-            Modeled on Accenture&apos;s current cognitive &amp; technical
+            Modeled current cognitive &amp; technical
             assessment sections: Verbal Ability, Logical Reasoning,
             Quantitative Aptitude, Pseudocode &amp; Programming Logic,
             Networking/Security/Cloud, and Core CS Fundamentals. Questions and
