@@ -1,8 +1,8 @@
 // Run with: npm run seed
-// Loads data/questionBank.json into MongoDB. Safe to re-run: it upserts on
-// (section + question text) so you can edit questionBank.json (or paste in
-// new questions you've sourced yourself) and re-seed to grow the bank without
-// creating duplicates.
+// Loads every *.json file in data/ into MongoDB. Safe to re-run: it upserts on
+// (section + question text) so you can edit any file in data/ (or drop in a
+// brand new one, like data/devQuestionBank.json) and re-seed to grow the bank
+// without creating duplicates.
 import "dotenv/config";
 import mongoose from "mongoose";
 import fs from "fs";
@@ -21,23 +21,36 @@ async function main() {
     process.exit(1);
   }
 
-  const file = path.join(__dirname, "..", "data", "questionBank.json");
-  const questions = JSON.parse(fs.readFileSync(file, "utf-8"));
+  const dataDir = path.join(__dirname, "..", "data");
+  const files = fs
+    .readdirSync(dataDir)
+    .filter((f) => f.endsWith(".json"))
+    .sort();
+
+  if (files.length === 0) {
+    console.error(`No .json files found in ${dataDir}`);
+    process.exit(1);
+  }
 
   await mongoose.connect(uri);
-  console.log(`Connected. Upserting ${questions.length} questions...`);
 
   let inserted = 0;
   let updated = 0;
 
-  for (const q of questions) {
-    const res = await Question.updateOne(
-      { section: q.section, question: q.question },
-      { $set: { ...q, active: true } },
-      { upsert: true }
-    );
-    if (res.upsertedCount > 0) inserted++;
-    else updated++;
+  for (const file of files) {
+    const filePath = path.join(dataDir, file);
+    const questions = JSON.parse(fs.readFileSync(filePath, "utf-8"));
+    console.log(`Upserting ${questions.length} questions from ${file}...`);
+
+    for (const q of questions) {
+      const res = await Question.updateOne(
+        { section: q.section, question: q.question },
+        { $set: { ...q, active: true } },
+        { upsert: true }
+      );
+      if (res.upsertedCount > 0) inserted++;
+      else updated++;
+    }
   }
 
   console.log(`Done. Inserted: ${inserted}, Updated: ${updated}`);

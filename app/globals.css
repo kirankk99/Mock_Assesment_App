@@ -315,6 +315,7 @@ header.app-header h1 {
   border-radius: 4px;
   font-size: 14px;
   line-height: 1.5;
+  white-space: pre-wrap;
 }
 .review-code {
   background-color: #f5f5f5;
