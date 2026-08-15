@@ -60,6 +60,7 @@ export async function POST(req: Request) {
         email: user.email,
         role: user.role,
         orgSlug,
+        avatarUrl: user.avatarUrl ?? null,
       },
     });
     response.cookies.set(SESSION_COOKIE_NAME, token, {

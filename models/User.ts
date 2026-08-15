@@ -11,6 +11,7 @@ export interface UserDocument extends Document {
   role: UserRole;
   isActive: boolean;
   mustResetPassword: boolean;
+  avatarUrl: string | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -42,6 +43,7 @@ const UserSchema = new Schema<UserDocument>(
     },
     isActive: { type: Boolean, default: true },
     mustResetPassword: { type: Boolean, default: false },
+    avatarUrl: { type: String, default: null },
   },
   { timestamps: true }
 );

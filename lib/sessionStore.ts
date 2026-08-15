@@ -8,6 +8,7 @@ export interface SessionUser {
   email: string;
   role: UserRole;
   orgSlug: string | null;
+  avatarUrl: string | null;
 }
 
 interface SessionUiState {

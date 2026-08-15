@@ -7,7 +7,14 @@ import type { UserRole } from "@/models/User";
 
 interface LoginResponse {
   redirectTo: string;
-  user: { id: string; name: string; email: string; role: UserRole; orgSlug: string | null };
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    role: UserRole;
+    orgSlug: string | null;
+    avatarUrl: string | null;
+  };
   error?: string;
 }
 
