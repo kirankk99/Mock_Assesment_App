@@ -1,8 +1,11 @@
-import { NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import Attempt from "@/models/Attempt";
 
-export async function GET(request, { params }) {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
   try {
     await connectDB();
     const attempt = await Attempt.findById(params.id);
@@ -24,7 +27,7 @@ export async function GET(request, { params }) {
       durationSeconds: attempt.durationSeconds,
       questions: clientQuestions,
     });
-  } catch (err) {
+  } catch (err: any) {
     console.error(err);
     return NextResponse.json({ error: err.message }, { status: 500 });
   }

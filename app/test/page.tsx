@@ -2,14 +2,9 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import {
-  loadActiveAttempt,
-  saveActiveAttempt,
-  clearActiveAttempt,
-  saveLastResult,
-} from "@/lib/storage";
+import { useAssessmentStore, type LastResult } from "@/lib/store";
 
-function formatTime(totalSeconds) {
+function formatTime(totalSeconds: number) {
   const s = Math.max(0, Math.floor(totalSeconds));
   const mins = Math.floor(s / 60);
   const secs = s % 60;
@@ -18,26 +13,30 @@ function formatTime(totalSeconds) {
 
 export default function TestPage() {
   const router = useRouter();
-  const [attempt, setAttempt] = useState(null);
+  const hasHydrated = useAssessmentStore((s) => s.hasHydrated);
+  const attempt = useAssessmentStore((s) => s.activeAttempt);
+  const answerQuestion = useAssessmentStore((s) => s.answerQuestion);
+  const clearActiveAttempt = useAssessmentStore((s) => s.clearActiveAttempt);
+  const setLastResult = useAssessmentStore((s) => s.setLastResult);
+
   const [currentIdx, setCurrentIdx] = useState(0);
   const [remaining, setRemaining] = useState(0);
   const [submitting, setSubmitting] = useState(false);
   const submittedRef = useRef(false);
 
   useEffect(() => {
-    const a = loadActiveAttempt();
-    if (!a) {
+    if (!hasHydrated) return;
+    if (!attempt) {
       router.replace("/");
       return;
     }
-    setAttempt(a);
-    const elapsed = Math.floor((Date.now() - a.startedAt) / 1000);
-    setRemaining(a.durationSeconds - elapsed);
+    const elapsed = Math.floor((Date.now() - attempt.startedAt) / 1000);
+    setRemaining(attempt.durationSeconds - elapsed);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [hasHydrated]);
 
   const doSubmit = useCallback(
-    async (finalAnswers) => {
+    async (finalAnswers: (number | null)[]) => {
       if (submittedRef.current || !attempt) return;
       submittedRef.current = true;
       setSubmitting(true);
@@ -50,18 +49,21 @@ export default function TestPage() {
             answers: finalAnswers,
           }),
         });
-        const data = await res.json();
+        const data: LastResult & { error?: string } = await res.json();
         if (!res.ok) throw new Error(data.error || "Submit failed");
-        saveLastResult(data);
+        setLastResult(data);
         clearActiveAttempt();
         router.push("/results");
       } catch (err) {
-        alert("Could not submit: " + err.message);
+        alert(
+          "Could not submit: " +
+            (err instanceof Error ? err.message : String(err))
+        );
         submittedRef.current = false;
         setSubmitting(false);
       }
     },
-    [attempt, router]
+    [attempt, router, setLastResult, clearActiveAttempt]
   );
 
   // Timer tick
@@ -79,20 +81,17 @@ export default function TestPage() {
     return () => clearInterval(interval);
   }, [attempt, doSubmit]);
 
-  if (!attempt) return null;
+  if (!hasHydrated || !attempt) return null;
 
   const questions = attempt.questions;
   const q = questions[currentIdx];
   const answered = attempt.answers.filter((a) => a !== null).length;
 
-  function selectOption(optIdx) {
-    const updated = { ...attempt, answers: [...attempt.answers] };
-    updated.answers[currentIdx] = optIdx;
-    setAttempt(updated);
-    saveActiveAttempt(updated);
+  function selectOption(optIdx: number) {
+    answerQuestion(currentIdx, optIdx);
   }
 
-  function goTo(idx) {
+  function goTo(idx: number) {
     setCurrentIdx(idx);
   }
 
@@ -105,6 +104,7 @@ export default function TestPage() {
   }
 
   function confirmSubmit() {
+    if (!attempt) return;
     const unanswered = attempt.answers.filter((a) => a === null).length;
     const msg =
       unanswered > 0
@@ -116,6 +116,7 @@ export default function TestPage() {
   }
 
   function abortTest() {
+    if (!attempt) return;
     if (
       confirm(
         "This will cancel your in-progress test and clear all your answers. Continue?"
@@ -136,7 +137,7 @@ export default function TestPage() {
   return (
     <div>
       <header className="app-header">
-        <h1>Testing: Accenture Technical Aptitude</h1>
+        <h1>Testing: Technical Aptitude</h1>
         <div className={`timer-box ${lowTime ? "low-time" : ""}`}>
           {formatTime(remaining)}
         </div>
@@ -162,17 +163,11 @@ export default function TestPage() {
           </div>
           <div className="legend">
             <div>
-              <span
-                className="legend-dot"
-                style={{ background: "var(--accenture-purple)" }}
-              ></span>
+              <span className="legend-dot bg-purple"></span>
               Current question
             </div>
             <div>
-              <span
-                className="legend-dot"
-                style={{ background: "#f3e5f5", border: "1px solid var(--accenture-purple)" }}
-              ></span>
+              <span className="legend-dot border border-purple bg-[#f3e5f5]"></span>
               Answered
             </div>
           </div>
@@ -185,8 +180,7 @@ export default function TestPage() {
               Submit Exam
             </button>
             <button
-              className="btn btn-secondary"
-              style={{ background: "#ffebee", color: "var(--error-red)" }}
+              className="btn btn-secondary bg-[#ffebee] text-error-red"
               onClick={abortTest}
               disabled={submitting}
             >

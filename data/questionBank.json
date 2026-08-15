@@ -64,4 +64,6 @@
   { "section": "Core CS Fundamentals", "question": "What does ACID stand for in the context of database transactions?", "options": ["Atomicity, Consistency, Isolation, Durability", "Access, Control, Integrity, Data", "Availability, Concurrency, Isolation, Design", "Atomicity, Concurrency, Integrity, Durability"], "correctIndex": 0, "explanation": "ACID properties (Atomicity, Consistency, Isolation, Durability) guarantee reliable database transactions." },
   { "section": "Core CS Fundamentals", "question": "Which data structure follows LIFO (Last In, First Out) ordering?", "options": ["Queue", "Stack", "Linked List", "Tree"], "correctIndex": 1, "explanation": "A Stack removes the most recently added element first, which is the defining property of LIFO." },
   { "section": "Core CS Fundamentals", "question": "In object-oriented design, an abstract class:", "options": ["Can be instantiated directly like any other class", "Cannot be instantiated and may contain abstract (unimplemented) methods", "Must contain only static methods", "Is identical to an interface in every language"], "correctIndex": 1, "explanation": "Abstract classes cannot be instantiated on their own and are meant to be subclassed, often declaring methods without implementation." }
+
+
 ]

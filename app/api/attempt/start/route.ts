@@ -1,12 +1,23 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
-import Question from "@/models/Question";
-import Attempt from "@/models/Attempt";
+import Question, { type QuestionSection } from "@/models/Question";
+import Attempt, { type SnapshotQuestion } from "@/models/Attempt";
+import type { Types } from "mongoose";
 
 const QUESTIONS_PER_TEST = 30;
 const DURATION_SECONDS = 60 * 60; // 60 minutes
 
-function shuffle(array) {
+interface RawQuestion {
+  _id: Types.ObjectId;
+  section: string;
+  question: string;
+  code: string | null;
+  options: string[];
+  correctIndex: number;
+  explanation: string;
+}
+
+function shuffle<T>(array: T[]): T[] {
   const a = [...array];
   for (let i = a.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -19,7 +30,9 @@ export async function POST() {
   try {
     await connectDB();
 
-    const sections = await Question.distinct("section", { active: true });
+    const sections: QuestionSection[] = await Question.distinct("section", {
+      active: true,
+    });
     if (sections.length === 0) {
       return NextResponse.json(
         {
@@ -35,9 +48,9 @@ export async function POST() {
       Math.floor(QUESTIONS_PER_TEST / sections.length)
     );
 
-    let picked = [];
+    let picked: RawQuestion[] = [];
     for (const section of sections) {
-      const pool = await Question.aggregate([
+      const pool: RawQuestion[] = await Question.aggregate([
         { $match: { active: true, section } },
         { $sample: { size: perSection } },
       ]);
@@ -47,7 +60,7 @@ export async function POST() {
     // Top up (or trim) to exactly QUESTIONS_PER_TEST if section counts don't divide evenly
     if (picked.length < QUESTIONS_PER_TEST) {
       const usedIds = picked.map((q) => q._id);
-      const extra = await Question.aggregate([
+      const extra: RawQuestion[] = await Question.aggregate([
         { $match: { active: true, _id: { $nin: usedIds } } },
         { $sample: { size: QUESTIONS_PER_TEST - picked.length } },
       ]);
@@ -55,7 +68,7 @@ export async function POST() {
     }
     picked = shuffle(picked).slice(0, QUESTIONS_PER_TEST);
 
-    const snapshotQuestions = picked.map((q) => {
+    const snapshotQuestions: SnapshotQuestion[] = picked.map((q) => {
       const optionOrder = shuffle(q.options.map((_, i) => i));
       const shuffledOptions = optionOrder.map((i) => q.options[i]);
       const correctIndex = optionOrder.indexOf(q.correctIndex);
@@ -92,7 +105,7 @@ export async function POST() {
       durationSeconds: DURATION_SECONDS,
       questions: clientQuestions,
     });
-  } catch (err) {
+  } catch (err: any) {
     console.error(err);
     return NextResponse.json({ error: err.message }, { status: 500 });
   }

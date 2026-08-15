@@ -1,23 +1,23 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { loadLastResult, clearLastResult } from "@/lib/storage";
+import { useAssessmentStore } from "@/lib/store";
 
 export default function ResultsPage() {
   const router = useRouter();
-  const [result, setResult] = useState(null);
+  const hasHydrated = useAssessmentStore((s) => s.hasHydrated);
+  const result = useAssessmentStore((s) => s.lastResult);
+  const clearLastResult = useAssessmentStore((s) => s.clearLastResult);
 
   useEffect(() => {
-    const r = loadLastResult();
-    if (!r) {
+    if (!hasHydrated) return;
+    if (!result) {
       router.replace("/");
-      return;
     }
-    setResult(r);
-  }, [router]);
+  }, [hasHydrated, result, router]);
 
-  if (!result) return null;
+  if (!hasHydrated || !result) return null;
 
   function resetAndGoHome() {
     if (
@@ -31,17 +31,17 @@ export default function ResultsPage() {
   return (
     <div>
       <header className="app-header">
-        <h1>Accenture India Technical Aptitude Simulator</h1>
+        <h1>Technical Aptitude Simulator</h1>
       </header>
 
-      <div className="quiz-area" style={{ overflowY: "visible" }}>
+      <div className="quiz-area overflow-y-visible">
         <div className="results-container">
           <div className="score-card">
             <h2>Test Completed!</h2>
             <div className="score-circle">
               {result.score}/{result.total}
             </div>
-            <div className="flex-row" style={{ justifyContent: "center" }}>
+            <div className="flex-row justify-center">
               <button className="btn btn-secondary" onClick={() => router.push("/")}>
                 Back to Dashboard
               </button>
@@ -51,26 +51,13 @@ export default function ResultsPage() {
             </div>
           </div>
 
-          <h2
-            style={{
-              marginBottom: 20,
-              borderBottom: "2px solid var(--accenture-purple)",
-              paddingBottom: 10,
-            }}
-          >
+          <h2 className="mb-5 border-b-2 border-purple pb-[10px]">
             Explanatory Performance Review
           </h2>
 
           {result.review.map((item) => (
             <div className="review-item" key={item.index}>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  marginBottom: 10,
-                }}
-              >
+              <div className="mb-[10px] flex items-center justify-between">
                 <div className="section-tag">{item.section}</div>
                 <span
                   className={`review-status ${
@@ -80,20 +67,20 @@ export default function ResultsPage() {
                   {item.isCorrect ? "Correct" : "Incorrect"}
                 </span>
               </div>
-              <h3 style={{ marginBottom: 10, fontSize: 15 }}>
+              <h3 className="mb-[10px] text-[15px]">
                 Q{item.index + 1}. {item.question}
               </h3>
               {item.code && <div className="review-code">{item.code}</div>}
-              <p style={{ fontSize: 14, marginBottom: 5 }}>
+              <p className="mb-[5px] text-sm">
                 <strong>Your Choice:</strong>{" "}
                 {item.chosenIndex !== null ? (
                   item.options[item.chosenIndex]
                 ) : (
-                  <span style={{ color: "var(--error-red)" }}>Unattempted</span>
+                  <span className="text-error-red">Unattempted</span>
                 )}
               </p>
               {!item.isCorrect && (
-                <p style={{ fontSize: 14, marginBottom: 5, color: "var(--success-green)" }}>
+                <p className="mb-[5px] text-sm text-success-green">
                   <strong>Correct Answer:</strong> {item.options[item.correctIndex]}
                 </p>
               )}
