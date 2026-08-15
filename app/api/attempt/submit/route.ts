@@ -1,12 +1,15 @@
-import { NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 import { connectDB } from "@/lib/mongodb";
-import Attempt from "@/models/Attempt";
+import Attempt, { type AttemptDocument } from "@/models/Attempt";
 
-export async function POST(request) {
+export async function POST(request: NextRequest) {
   try {
     await connectDB();
     const body = await request.json();
-    const { attemptId, answers } = body; // answers: array of (optionIndex|null), same length/order as questions
+    const { attemptId, answers } = body as {
+      attemptId: string;
+      answers: (number | null)[];
+    }; // answers: array of (optionIndex|null), same length/order as questions
 
     if (!attemptId || !Array.isArray(answers)) {
       return NextResponse.json(
@@ -55,13 +58,13 @@ export async function POST(request) {
       total: attempt.questions.length,
       review,
     });
-  } catch (err) {
+  } catch (err: any) {
     console.error(err);
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
 
-function buildResult(attempt) {
+function buildResult(attempt: AttemptDocument) {
   const review = attempt.questions.map((q, idx) => ({
     index: idx,
     section: q.section,

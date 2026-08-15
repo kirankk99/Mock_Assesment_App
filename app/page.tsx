@@ -1,36 +1,36 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-  saveActiveAttempt,
-  loadActiveAttempt,
-  clearActiveAttempt,
-  loadLastResult,
-  clearLastResult,
-} from "@/lib/storage";
+import { useAssessmentStore, type ClientQuestion } from "@/lib/store";
+
+interface StartAttemptResponse {
+  attemptId: string;
+  questions: ClientQuestion[];
+  durationSeconds: number;
+  error?: string;
+}
 
 export default function DashboardPage() {
   const router = useRouter();
-  const [activeAttempt, setActiveAttempt] = useState(null);
-  const [lastResult, setLastResult] = useState(null);
+  const activeAttempt = useAssessmentStore((s) => s.activeAttempt);
+  const lastResult = useAssessmentStore((s) => s.lastResult);
+  const setActiveAttempt = useAssessmentStore((s) => s.setActiveAttempt);
+  const clearActiveAttempt = useAssessmentStore((s) => s.clearActiveAttempt);
+  const clearLastResult = useAssessmentStore((s) => s.clearLastResult);
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
-  useEffect(() => {
-    setActiveAttempt(loadActiveAttempt());
-    setLastResult(loadLastResult());
-  }, []);
 
   async function startNewTest() {
     setLoading(true);
     setError("");
     try {
       const res = await fetch("/api/attempt/start", { method: "POST" });
-      const data = await res.json();
+      const data: StartAttemptResponse = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to start test");
 
-      saveActiveAttempt({
+      setActiveAttempt({
         attemptId: data.attemptId,
         questions: data.questions,
         durationSeconds: data.durationSeconds,
@@ -39,7 +39,7 @@ export default function DashboardPage() {
       });
       router.push("/test");
     } catch (err) {
-      setError(err.message);
+      setError(err instanceof Error ? err.message : String(err));
     } finally {
       setLoading(false);
     }
@@ -70,8 +70,6 @@ export default function DashboardPage() {
     }
     clearActiveAttempt();
     clearLastResult();
-    setActiveAttempt(null);
-    setLastResult(null);
   }
 
   return (
@@ -84,14 +82,14 @@ export default function DashboardPage() {
         <h2 className="dashboard-title">Mock Assessment Dashboard</h2>
 
         {error && (
-          <div className="card" style={{ borderColor: "var(--error-red)" }}>
-            <p style={{ color: "var(--error-red)" }}>{error}</p>
+          <div className="card border-error-red">
+            <p className="text-error-red">{error}</p>
           </div>
         )}
 
         <div className="card">
-          <h3 style={{ marginBottom: 10 }}>30 Questions · 60 Minutes</h3>
-          <p className="muted" style={{ marginBottom: 20 }}>
+          <h3 className="mb-[10px]">30 Questions · 60 Minutes</h3>
+          <p className="muted mb-5">
             Modeled current cognitive &amp; technical
             assessment sections: Verbal Ability, Logical Reasoning,
             Quantitative Aptitude, Pseudocode &amp; Programming Logic,
@@ -125,8 +123,8 @@ export default function DashboardPage() {
 
         {lastResult && (
           <div className="card">
-            <h3 style={{ marginBottom: 10 }}>Last Result</h3>
-            <p className="muted" style={{ marginBottom: 15 }}>
+            <h3 className="mb-[10px]">Last Result</h3>
+            <p className="muted mb-[15px]">
               Score: <strong>{lastResult.score}</strong> / {lastResult.total}
             </p>
             <button
@@ -139,8 +137,8 @@ export default function DashboardPage() {
         )}
 
         <div className="card">
-          <h3 style={{ marginBottom: 10 }}>Reset</h3>
-          <p className="muted" style={{ marginBottom: 15 }}>
+          <h3 className="mb-[10px]">Reset</h3>
+          <p className="muted mb-[15px]">
             Clears any in-progress test and your last saved result from this
             browser.
           </p>

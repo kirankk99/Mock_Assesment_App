@@ -8,7 +8,7 @@ import mongoose from "mongoose";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import Question from "../models/Question.js";
+import Question from "../models/Question";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
