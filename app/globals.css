@@ -156,4 +156,77 @@
   .flex-row {
     @apply flex flex-wrap gap-3;
   }
+
+  .auth-container {
+    @apply mx-auto max-w-[440px] px-5 py-10;
+  }
+  .form-group {
+    @apply mb-[15px] flex flex-col gap-[6px];
+  }
+  .form-label {
+    @apply text-sm font-semibold text-[#333];
+  }
+  .form-input {
+    @apply rounded-md border border-border-color px-[15px] py-[10px] text-sm focus:border-purple focus:outline-none;
+  }
+
+  /* --- Tenant chrome (Phase 2: sidebar drawer + profile dialog) --- */
+  .drawer-backdrop {
+    @apply fixed inset-0 z-40 bg-black/40 opacity-0 pointer-events-none transition-opacity duration-200;
+  }
+  .drawer-backdrop.open {
+    @apply opacity-100 pointer-events-auto;
+  }
+  .drawer-panel {
+    @apply fixed inset-y-0 left-0 z-50 flex w-[280px] -translate-x-full flex-col border-r border-border-color bg-white shadow-[4px_0_12px_rgba(0,0,0,0.15)] transition-transform duration-200 ease-out;
+  }
+  .drawer-panel.open {
+    @apply translate-x-0;
+  }
+  .drawer-header {
+    @apply flex items-center justify-between border-b border-border-color px-5 py-4;
+  }
+  .drawer-nav {
+    @apply flex flex-col gap-1 overflow-y-auto p-3;
+  }
+  .drawer-link {
+    @apply flex items-center gap-3 rounded-md px-3 py-[10px] text-sm font-semibold text-[#333] transition-colors hover:bg-[#f3e5f5] hover:text-purple;
+  }
+  .drawer-link.active {
+    @apply bg-purple text-white hover:bg-purple hover:text-white;
+  }
+
+  .modal-backdrop {
+    @apply fixed inset-0 z-40 flex items-center justify-center bg-black/40 p-5;
+  }
+  .modal-panel {
+    @apply w-full max-w-[480px] max-h-[90vh] overflow-y-auto rounded-lg border border-border-color bg-white p-[25px] shadow-[0_10px_30px_rgba(0,0,0,0.2)];
+  }
+  .modal-header {
+    @apply mb-5 flex items-center justify-between border-b border-border-color pb-[15px];
+  }
+
+  .avatar {
+    @apply flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#e0e0e0] text-sm font-bold text-[#555];
+  }
+  .avatar img {
+    @apply h-full w-full object-cover;
+  }
+  .avatar-lg {
+    @apply h-20 w-20 text-2xl;
+  }
+
+  .icon-btn {
+    @apply flex h-9 w-9 cursor-pointer items-center justify-center rounded-md border-none bg-transparent text-white/90 transition-colors hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-40;
+  }
+
+  .breadcrumb {
+    @apply mb-5 flex flex-wrap items-center gap-2 text-sm text-[#666];
+  }
+  .breadcrumb-sep {
+    @apply text-[#bbb];
+  }
+  .breadcrumb-current {
+    @apply font-semibold text-[#333];
+  }
 }

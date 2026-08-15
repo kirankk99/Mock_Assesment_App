@@ -3,7 +3,7 @@
 // (section + question text) so you can edit any file in data/ (or drop in a
 // brand new one, like data/devQuestionBank.json) and re-seed to grow the bank
 // without creating duplicates.
-import "dotenv/config";
+import "./load-env";
 import mongoose from "mongoose";
 import fs from "fs";
 import path from "path";

@@ -2,5 +2,12 @@
   command = "npm run build"
   publish = ".next"
 
+[build.environment]
+  # .env.example only ever holds a placeholder ("mongodb://<your code>"), never
+  # a real credential — but Netlify's secrets scanner still flags it because it
+  # matches the MONGODB_URI value literally. Excluded here rather than turning
+  # scanning off entirely.
+  SECRETS_SCAN_OMIT_PATHS = ".env.example"
+
 [[plugins]]
   package = "@netlify/plugin-nextjs"
