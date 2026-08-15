@@ -1,6 +1,6 @@
 {
   "name": "aptitude-simulator",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "type": "module",
   "scripts": {
@@ -8,7 +8,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "seed": "tsx scripts/seed.ts"
+    "seed": "tsx scripts/seed.ts",
+    "version:bump": "tsx scripts/version-manager.ts",
+    "package": "next build && tsx scripts/build-package.ts"
   },
   "dependencies": {
     "mongoose": "^8.5.0",
