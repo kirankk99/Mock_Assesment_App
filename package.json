@@ -9,10 +9,14 @@
     "start": "next start",
     "lint": "next lint",
     "seed": "tsx scripts/seed.ts",
+    "bootstrap:super-admin": "tsx scripts/bootstrap-super-admin.ts",
+    "approve-org": "tsx scripts/approve-org.ts",
     "version:bump": "tsx scripts/version-manager.ts",
     "package": "next build && tsx scripts/build-package.ts"
   },
   "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "jose": "^6.2.9",
     "mongoose": "^8.5.0",
     "next": "14.2.35",
     "react": "^18.3.1",

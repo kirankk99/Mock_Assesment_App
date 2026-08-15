@@ -156,4 +156,17 @@
   .flex-row {
     @apply flex flex-wrap gap-3;
   }
+
+  .auth-container {
+    @apply mx-auto max-w-[440px] px-5 py-10;
+  }
+  .form-group {
+    @apply mb-[15px] flex flex-col gap-[6px];
+  }
+  .form-label {
+    @apply text-sm font-semibold text-[#333];
+  }
+  .form-input {
+    @apply rounded-md border border-border-color px-[15px] py-[10px] text-sm focus:border-purple focus:outline-none;
+  }
 }
